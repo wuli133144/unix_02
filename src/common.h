@@ -93,6 +93,31 @@ pid_t Wait(int *staloc){
 /*@Fork end@*/
 
 
+/*@system impl@*/
+
+/*-version 0.1*/
+int System(const char *cmd){
+ pid_t pid;
+ int status;
+ if(cmd==NULL){
+   err_sys("cmd error");
+ }
+ pid=Fork();
+ if(pid==0){
+   execl("/bin/sh","sh","-c",cmd,0);
+   _exit(127);
+ }else {
+   //wait child
+   while((waitpid(pid,NULL,0))<0){
+     if(errno!=EINTR){
+        status=-1;
+        break;
+     }
+   }
+
+ }
+}
+/*@system impl end@*/
 
 
 
